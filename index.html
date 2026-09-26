@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>unified — build AI backwards</title>
+  <meta name="description" content="Specify the output first. Derive the model. Freeze a forward runtime." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #14181e;
+      --ink: #e8edf4;
+      --muted: #8b97a8;
+      --line: #2a3140;
+      --ok: #7dffa3;
+      --no: #ff7d7d;
+      --accent: #c9b37a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    body { min-height: 100vh; }
+    a { color: var(--accent); }
+    header { padding: 28px 24px 8px; max-width: 920px; margin: 0 auto; }
+    .mark { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+    h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.05; font-weight: 600; margin: 12px 0 8px; }
+    .lede { color: var(--muted); max-width: 36em; }
+    main { max-width: 920px; margin: 0 auto; padding: 8px 24px 64px; }
+    ol.order { padding-left: 1.2em; }
+    ol.order li { margin: 8px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+    .card h2 { margin: 0 0 12px; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+    input, select { width: 100%; background: #0b0d10; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font: 14px "IBM Plex Mono", monospace; }
+    button { margin-top: 16px; width: 100%; background: var(--accent); color: #14120b; border: 0; border-radius: 8px; padding: 12px; font: 600 14px "IBM Plex Sans", sans-serif; cursor: pointer; }
+    .out { margin-top: 16px; font-family: "IBM Plex Mono", monospace; font-size: 28px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .out.approve { color: var(--ok); }
+    .out.deny { color: var(--no); }
+    .meta { color: var(--muted); font-size: 12px; font-family: "IBM Plex Mono", monospace; margin-top: 8px; }
+    pre { background: #0b0d10; border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow: auto; font-size: 12px; line-height: 1.45; }
+    footer { max-width: 920px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="mark">unified / backwards ai</div>
+    <h1>Start with what it must emit.</h1>
+    <p class="lede">
+      Do not start with data, architecture, or a prompt.
+      Write the output contract. Pin finished answers.
+      Derive the smallest function. Freeze a forward runtime that never sees the contract text.
+    </p>
+  </header>
+  <main>
+    <ol class="order">
+      <li>Write the output contract.</li>
+      <li>Pin examples of the finished answer.</li>
+      <li>Derive the smallest function that can emit those answers.</li>
+      <li>Freeze a forward runtime.</li>
+    </ol>
+    <div class="grid">
+      <section class="card">
+        <h2>Live runtime — community loan gate</h2>
+        <p class="lede" style="margin-top:0">Seed contract fit 1.0. Fingerprint <span id="fp">0f75d8183bb3a7bc</span>.</p>
+        <label>income
+          <input id="income" type="number" value="48000" />
+        </label>
+        <label>years local
+          <input id="years" type="number" value="6" />
+        </label>
+        <label>prior defaults
+          <input id="defaults" type="number" value="0" />
+        </label>
+        <label>family tie
+          <select id="tie">
+            <option value="1" selected>true</option>
+            <option value="0">false</option>
+          </select>
+        </label>
+        <button type="button" id="run">Predict</button>
+        <div class="out" id="y">—</div>
+        <div class="meta" id="detail"></div>
+      </section>
+      <section class="card">
+        <h2>Frozen prototypes</h2>
+        <pre id="proto"></pre>
+      </section>
+    </div>
+  </main>
+  <footer>
+    Source: <a href="https://github.com/fitzyracing1/unified">github.com/fitzyracing1/unified</a>
+    · site: <a href="https://fitzyracing1.github.io/unified/">fitzyracing1.github.io/unified</a>
+  </footer>
+  <script>
+    const RUNTIME = {
+      name: "community-loan-gate",
+      schema: "label",
+      feature_names: ["family_tie", "income", "prior_defaults", "years_local"],
+      prototypes: [
+        { vec: { income: 42000, years_local: 8, prior_defaults: 0, family_tie: 1 }, y: "approve", w: 1 },
+        { vec: { income: 18000, years_local: 1, prior_defaults: 2, family_tie: 0 }, y: "deny", w: 1 },
+        { vec: { income: 55000, years_local: 12, prior_defaults: 0, family_tie: 1 }, y: "approve", w: 1 },
+        { vec: { income: 90000, years_local: 0, prior_defaults: 3, family_tie: 0 }, y: "deny", w: 1 }
+      ],
+      fingerprint: "0f75d8183bb3a7bc",
+      fit: 1.0
+    };
+    function dist(a, b) {
+      let s = 0;
+      for (let i = 0; i < a.length; i++) s += (a[i] - b[i]) ** 2;
+      return Math.sqrt(s);
+    }
+    function predict(given) {
+      const names = RUNTIME.feature_names;
+      const q = names.map((n) => Number(given[n] ?? 0));
+      const votes = {};
+      let nearest = null;
+      let bestD = Infinity;
+      for (const p of RUNTIME.prototypes) {
+        const pv = names.map((n) => Number(p.vec[n] ?? 0));
+        const d = dist(q, pv);
+        const score = p.w / (d + 1e-9);
+        votes[p.y] = (votes[p.y] || 0) + score;
+        if (d < bestD) { bestD = d; nearest = p; }
+      }
+      const y = Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+      return { y, d: bestD, nearest };
+    }
+    function run() {
+      const given = {
+        income: Number(document.getElementById("income").value),
+        years_local: Number(document.getElementById("years").value),
+        prior_defaults: Number(document.getElementById("defaults").value),
+        family_tie: Number(document.getElementById("tie").value)
+      };
+      const r = predict(given);
+      const el = document.getElementById("y");
+      el.textContent = r.y;
+      el.className = "out " + r.y;
+      document.getElementById("detail").textContent =
+        "nearest prototype " + r.nearest.y + " · d=" + r.d.toFixed(2);
+    }
+    document.getElementById("proto").textContent = JSON.stringify(RUNTIME.prototypes, null, 2);
+    document.getElementById("run").addEventListener("click", run);
+    run();
+  </script>
+</body>
+</html>
