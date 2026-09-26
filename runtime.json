@@ -1,0 +1,54 @@
+{
+  "name": "community-loan-gate",
+  "schema": "label",
+  "feature_names": [
+    "family_tie",
+    "income",
+    "prior_defaults",
+    "years_local"
+  ],
+  "prototypes": [
+    {
+      "vec": {
+        "income": 42000.0,
+        "years_local": 8.0,
+        "prior_defaults": 0.0,
+        "family_tie": 1.0
+      },
+      "y": "approve",
+      "w": 1.0
+    },
+    {
+      "vec": {
+        "income": 18000.0,
+        "years_local": 1.0,
+        "prior_defaults": 2.0,
+        "family_tie": 0.0
+      },
+      "y": "deny",
+      "w": 1.0
+    },
+    {
+      "vec": {
+        "income": 55000.0,
+        "years_local": 12.0,
+        "prior_defaults": 0.0,
+        "family_tie": 1.0
+      },
+      "y": "approve",
+      "w": 1.0
+    },
+    {
+      "vec": {
+        "income": 90000.0,
+        "years_local": 0.0,
+        "prior_defaults": 3.0,
+        "family_tie": 0.0
+      },
+      "y": "deny",
+      "w": 1.0
+    }
+  ],
+  "fingerprint": "0f75d8183bb3a7bc",
+  "fit": 1.0
+}
