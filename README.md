@@ -27,3 +27,11 @@ You start with the thing the system must emit.
 python3 backwards_ai.py
 python3 cli.py predict '{"income":48000,"years_local":6,"prior_defaults":0,"family_tie":true}'
 ```
+
+## Plans
+
+This project is free, and its license stays as is. Support it through [GitHub Sponsors](https://github.com/sponsors/fitzyracing1):
+
+- **Free**: use the code, community support.
+- **Pro ($49/month)**: priority issues and support.
+- **Team ($199/month)**: priority support for your team plus early access.
